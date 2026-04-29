@@ -1,0 +1,168 @@
+<%- include("../components/header.ejs", { titulo , ocultarbtnreg, ocultarbtnini }) %>
+
+<main>
+    <div class="main-content">
+      <section>
+        <div >
+          <h2>Construye tu recorrido turistico</h2>
+
+          
+          
+          <main class="map-container">
+            <div id="mapa"></div>
+          </main>
+          <div id="info-ruta"></div>
+          <div class="lugares-activos" id="lugares-activos"></div>
+          
+        </div>
+      </section>
+      <section>
+        <div class="seclugares">
+          <h1 class="titlugares">Selecciona los lugares que quieres visitar</h1>
+          <div class="scrolllugares">
+          <% lugares.forEach(function(lugar) { %>
+            <div class="lugar-item" data-id="<%= lugar.id %>">
+              
+              <div class="lugar-info">
+                <div class="lugar-nombre"><%= lugar.nombre %></div>
+                <img class="lugar-icon" src="<%= lugar.icono %>">
+                <div class="lugar-descripcion"><%= lugar.descripcion %></div>
+              </div>
+              <div class="switch-container">
+                <input 
+                  type="checkbox" 
+                  class="switch-input lugar-switch" 
+                  data-id="<%= lugar.id %>"
+                  data-nombre="<%= lugar.nombre %>"
+                  data-lat="<%= lugar.coordenadas[0] %>"
+                  data-lng="<%= lugar.coordenadas[1] %>"
+                  data-color="<%= lugar.color %>"
+                  data-icono="<%= lugar.icono %>"
+                  data-descripcion="<%= lugar.descripcion %>"
+                  style="display: none;"
+                >
+                <label for="<%= lugar.id %>" class="switch-label lugar-switch">
+                  <span class="switch-thumb lugar-switch">
+
+                  </span>
+                </label>
+              </div>
+            </div>
+            
+          <% }); %>
+          </div>
+        
+          
+        </div>
+      </section>
+      <section>
+        <div class="seclugares">
+          <h2 class="titlugares">Selecciona el guía que prefieras</h2>
+          <div class="guias-grid">
+            <% guias.forEach(function(guia) { %>
+              <div class="guia-item" data-id="<%= guia.id %>">
+                <div class="guia-nombre"><%= guia.nombre %></div>
+                <img src="<%= guia.foto %>" alt="<%= guia.nombre %>" class="guia-foto" />
+                
+                <div class="guia-rating">
+                  <% for (let i = 1; i <= 5; i++) { %>
+                    <% if (i <= guia.rating) { %>
+                      <span class="star filled">★</span>
+                    <% } else { %>
+                      <span class="star">☆</span>
+                    <% } %>
+                  <% } %>
+                </div>
+                <% const uniqueId = 'guia_' + guia.id; %>
+                <div class="guia-select">
+                  <input type="radio" id="guia_<%= guia.id %>" name="guia" style ="display: none;" class="sguia-input">
+                  <label for="guia_<%= guia.id %>" class="sguia-label">
+                    <span class="sguia-span">
+
+                    </span>
+                  </label>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      </section>
+
+        <% if ( usuario !== undefined) { %>
+
+            <div class="panel">
+          <h2>Información Personal</h2>
+          
+          <div class="datos-reserva">
+          
+          <form id="form-reserva" class="datos-reserva">
+            <div class="dato-item">
+              <label for="cedula" class="dato-label">Numero de Cedula</label>
+              <span class="dato-valor"><%= usuario?.cedula %></span>
+              <input type="text" id="cedula" name="cedula" value="<%= usuario?.cedula %>" placeholder="Ej: 1234567890" style="display: none">
+            </div>
+            <div class="dato-item">
+              <label for="nombre" class="dato-label">Nombre Completo</label>
+              <span class="dato-valor"><%= usuario.nombre %></span>
+              <input type="text" id="nombre" name="nombre" value="<%= usuario.nombre %>" placeholder="Ej: Juan Perez" style="display: none">
+            </div>
+            <div class="dato-item">
+              <label for="email" class="dato-label">Correo Electronico</label>
+              <span class="dato-valor"><%= usuario.email %></span>
+              <input type="email" id="email" name="email" value="<%= usuario.email %>" placeholder="Ej: correo@ejemplo.com" style="display: none">
+            </div>
+            <div class="dato-item">
+              <label for="telefono" class="dato-label">Telefono</label>
+              <span class="dato-valor"><%= usuario.telefono %></span>
+              <input type="tel" id="telefono" value="<%= usuario.telefono %>" name="telefono" placeholder="Ej: 3001234567" style="display: none">
+            </div>
+            <div class="dato-item">
+              <label for="fechaVisita" class="dato-label">Fecha de Visita</label>
+              <input type="date" id="fechaVisita" name="fechaVisita" class="inputreg">
+            </div>
+            <button type="submit" class="btn-reservar" id="btn-reservar" disabled>
+              Guardar Reserva
+            </button>
+            <p class="form-hint">* Selecciona al menos un lugar para guardar la reserva</p>
+          </form>
+
+          </div>
+
+          <div id="mensaje-reserva"></div>
+        </div>
+
+      <% } else { %>
+
+        <div>
+          <h2>Inicia secion para realizar una reservacion</h2>
+        </div>
+
+      <% } %>
+      
+    </div>
+  </div>
+
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Leaflet Routing Machine -->
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+  <script src="/js/guia-turistica.js"></script>
+
+  
+  <!-- Modal de éxito al guardar reserva -->
+  <div id="success-modal-overlay" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <div id="success-modal-content">
+        <h2 class="modal-title">Registro guardado con éxito</h2>
+        <p class="modal-body">Tu reserva ha sido guardada correctamente.</p>
+        <div class="modal-actions">
+          <button id="success-modal-continue" class="modal-btn modal-confirm">Continuar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+</main>
+<%- include("../components/footer.ejs") %>

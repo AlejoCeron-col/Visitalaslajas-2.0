@@ -1,0 +1,58 @@
+<%- include("../components/header.ejs", { titulo , ocultarbtnreg, ocultarbtnini }) %>
+
+    <main class="consre">
+      <div class="consulta">
+        <h2>Consulta tu reserva</h2>
+        <form id="form-consulta" class="form-reserva">
+          <div class="form-group">
+            <input class="inpce" type="text" id="cedula-consulta" name="cedula" required placeholder="Ingresa tu numero de cedula">
+          </div>
+          <button type="submit" class="btn-consultar">Consultar Reserva</button>
+        </form>
+        <div id="mensaje-consulta" class="mencon"></div>
+        <div class="map-container">
+            <div id="mapa"></div>
+            <div id="mapa-mensaje" class="mapa-mensaje">
+              <p>Ingresa tu numero de cedula para ver los lugares de tu reserva en el mapa.</p>
+            </div>
+        </div>
+      </div>
+
+      
+      <div class="panellugares" id="panel-lugares" style="display: none;">
+         <h2 class="sec2">Lugares Seleccionados</h2>
+         <div id="lugares-reserva" class="lugares"></div>
+       </div>
+      
+      
+
+      <div class="panel" id="panel-reserva" style="display: none;">
+        <h2>Datos de la Reserva</h2>
+        <div id="datos-reserva" class="datos-reserva"></div>
+      </div>
+
+      
+    </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+
+  <script src="/js/consulta_reserva.js"></script>
+
+  <!-- Modal de confirmación/eliminación -->
+  <div id="modal-overlay" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <div id="modal-content">
+        <h2 class="modal-title">¿Deseas eliminar esta reserva?</h2>
+        <p class="modal-body">Esta acción no se puede deshacer. Confirma si deseas cancelar la reserva.</p>
+        <div class="modal-actions">
+          <button id="modal-cancel" class="modal-btn modal-cancel">Cancelar</button>
+          <button id="modal-confirm" class="modal-btn modal-confirm">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include("../components/footer.ejs") %>
+

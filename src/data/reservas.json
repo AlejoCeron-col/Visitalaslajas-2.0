@@ -1,0 +1,17 @@
+[
+  {
+    "id": "1765515818743",
+    "cedula": "1",
+    "nombre": "1",
+    "email": "1@gmail.com",
+    "telefono": "1",
+    "fechaVisita": "2025-12-30",
+    "lugaresSeleccionados": [
+      "mirador-lajas",
+      "centro-ipiales",
+      "catedral-ipiales"
+    ],
+    "guiaId": "g4",
+    "fechaCreacion": "2025-12-12T05:03:38.743Z"
+  }
+]
