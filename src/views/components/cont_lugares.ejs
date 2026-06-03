@@ -1,8 +1,8 @@
 <div class="cont-lugares">
     <p class="p-lugares">
-        Nombre del lugar turistico
+        <%= tit_cont %>
     </p>
-    <img class="img-lugares" src="/img/catalogo-lugares.jpg" alt="Lugar turistico">
+    <img class="img-lugares" src="<%= img %>" alt="Lugar turistico">
     <div class="div-svg">
         <svg width="142" height="27" viewBox="0 0 142 27" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12.5 2.25L15.7187 9.2925L22.9167 10.4288L17.7083 15.9075L18.9375 23.6475L12.5 19.9912L6.0625 23.6475L7.29167 15.9075L2.08333 10.4288L9.28125 9.2925L12.5 2.25Z" stroke="#F3F3F3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -13,6 +13,6 @@
         </svg>
     </div>
     <p class="p-lugaresdes">
-        Descripcion corta del lugar turistico a visitar
+        <%- text_desc %>
     </p>
 </div>

@@ -219,10 +219,42 @@ export function verificarAutenticacion(req, res, next) {
 // Ruta lugare_visitar
 router.get("/lugares_visita", (req, res) => {
   res.render("lugares_visita", {
+    
     titulo: "Lugares para visitar - Las Lajas e Ipiales",
     ocultarbtnreg: true,
     ocultarbtnini: true,
-    error: null
+    img: "/img/catalogo-lugares.jpg",
+    text_desc: "Descripcion corta del lugar turistico a visitar",
+    tit_cont: "Nombre del lugar turistico",
+    error: null    
+  })
+})
+
+//Ruta restaurantes
+router.get("/restaurantes", (req, res) => {
+  res.render("restaurantes", {
+    
+    titulo: "Restaurantes - Las Lajas e Ipiales",
+    ocultarbtnreg: true,
+    ocultarbtnini: true,
+    img: "/img/restaurantes.jpg",
+    text_desc: "Ubicacion del restaurante <br> Telefono del restaurante <br> Contacto del restaurante",
+    tit_cont: "Nombre del restaurante",
+    error: null    
+  })
+})
+
+//Ruta hoteles
+router.get("/hoteles", (req, res) => {
+  res.render("hoteles", {
+    
+    titulo: "Hoteles - Las Lajas e Ipiales",
+    ocultarbtnreg: true,
+    ocultarbtnini: true,
+    img: "/img/hoteles.jpg",
+    text_desc: "Ubicacion del hotel <br> Telefono del hotel <br> Contacto del hotel",
+    tit_cont: "Nombre del hotel",
+    error: null    
   })
 })
 
