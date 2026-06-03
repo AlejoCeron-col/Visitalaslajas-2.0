@@ -216,4 +216,16 @@ export function verificarAutenticacion(req, res, next) {
   next()
 }
 
+// Ruta lugare_visitar
+router.get("/lugares_visita", (req, res) => {
+  res.render("lugares_visita", {
+    titulo: "Lugares para visitar - Las Lajas e Ipiales",
+    ocultarbtnreg: true,
+    ocultarbtnini: true,
+    error: null
+  })
+})
+
+
+
 export default router

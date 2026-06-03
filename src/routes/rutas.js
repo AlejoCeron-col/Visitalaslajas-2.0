@@ -165,7 +165,7 @@ router.get("/api/reservas/:cedula", async (req, res) => {
   }
 })
 
-// API para obtener lugares
+
 router.get("/api/lugares", (req, res) => {
   res.json(lugaresTuristicos)
 })
