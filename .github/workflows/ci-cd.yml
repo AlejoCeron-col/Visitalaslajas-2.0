@@ -55,7 +55,7 @@ jobs:
       env:
         DATABASE_URL: postgres://postgres:postgres@localhost:5432/visita_lajas_db
     - name: List databases
-        run: |
+      run: |
         PGPASSWORD=postgres psql -h localhost -U postgres -l
     
     - name: Run E2E Tests
