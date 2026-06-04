@@ -26,12 +26,12 @@ jobs:
           - 5432:5432
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
-        node-version: '18'
+        node-version: '22'
         cache: 'npm'
     
     - name: Install dependencies
@@ -55,7 +55,7 @@ jobs:
       run: npm test -- --coverage
     
     - name: Upload Coverage to Codecov
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         file: ./coverage/coverage-final.json
         flags: unittests
@@ -68,12 +68,12 @@ jobs:
     if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
-        node-version: '18'
+        node-version: '22'
         cache: 'npm'
     
     - name: Install dependencies
