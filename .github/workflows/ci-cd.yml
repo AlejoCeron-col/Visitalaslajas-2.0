@@ -31,7 +31,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v5
       with:
-        node-version: '22'
+        node-version: '20'
         cache: 'npm'
     
     - name: Install dependencies
@@ -39,6 +39,15 @@ jobs:
 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    
+    - name: Check Playwright Version
+      run: npx playwright --version
+
+    - name: List Installed Browsers
+      run: npx playwright install --list
+
+    - name: Check Browser Cache
+      run: ls -la ~/.cache/ms-playwright || true
         
     - name: Run Linter
       run: npm run lint || true
