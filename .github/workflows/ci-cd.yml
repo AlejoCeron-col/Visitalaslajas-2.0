@@ -83,14 +83,18 @@ jobs:
       run: npm run build || echo "No build script"
     
     - name: Deploy to Render
-      if: ${{ secrets.RENDER_DEPLOY_HOOK }}
+      env:
+        RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+      if: ${{ env.RENDER_DEPLOY_HOOK != '' }}
       run: |
-        curl ${{ secrets.RENDER_DEPLOY_HOOK }} \
+        curl "$RENDER_DEPLOY_HOOK" \
           -H "Content-Type: application/json" \
           -d '{"commit_sha":"'${{ github.sha }}'"}' || true
     
     - name: Deploy to Railway
-      if: ${{ secrets.RAILWAY_DEPLOY_TOKEN }}
+      env:
+        RAILWAY_DEPLOY_TOKEN: ${{ secrets.RAILWAY_DEPLOY_TOKEN }}
+      if: ${{ env.RAILWAY_DEPLOY_TOKEN != '' }}
       run: |
         echo "Deploying to Railway..."
         echo "Deployment triggered on main branch"
