@@ -8,7 +8,7 @@ test.describe('Guía Turística E2E', () => {
     await expect(page).toHaveTitle(/Mapa Turístico/)
     
     // Verify main heading exists
-    const heading = page.locator('h1, h2, .title')
+    const heading = page.locator('h1').first()
     await expect(heading).toBeVisible()
   })
 
