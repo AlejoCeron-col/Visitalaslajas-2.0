@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Rutas para lugares turísticos, guías y reservas
+ * Incluye endpoints para visualizar el mapa turístico, listar guías,
+ * crear y consultar reservas.
+ */
+
 import { oc } from "date-fns/locale/oc"
 import express from "express"
 import { Router } from "express"
@@ -86,6 +92,13 @@ const guiasTuristicos = [
   { id: 'g10', nombre: 'Laura Peña', foto: 'https://i.pravatar.cc/150?img=20', rating: 4 },
 ]
 
+/**
+ * GET /guia_turistica
+ * Renderiza la página del mapa turístico interactivo con todos los lugares
+ * y guías disponibles. Muestra información detallada de cada atracción.
+ * @route GET /guia_turistica
+ * @returns {HTML} Página renderizada con lugar y guías disponibles
+ */
 router.get("/guia_turistica", (req, res) => {
   res.render("guia_turistica", {
     titulo: "Mapa Turístico - Las Lajas e Ipiales",
@@ -111,6 +124,23 @@ router.get("/consulta_reserva", (req, res) => {
 
 
 
+/**
+ * POST /api/reservas
+ * Crea una nueva reserva de visita turística en la base de datos.
+ * Requiere cédula, nombre, lugares seleccionados y guía.
+ * @route POST /api/reservas
+ * @param {Object} req.body - Datos de la reserva
+ * @param {string} req.body.cedula - Cédula del visitante
+ * @param {string} req.body.nombre - Nombre del visitante
+ * @param {string} req.body.email - Email del visitante (opcional)
+ * @param {string} req.body.telefono - Teléfono del visitante (opcional)
+ * @param {string} req.body.fechaVisita - Fecha de la visita
+ * @param {Array} req.body.lugaresSeleccionados - IDs de lugares a visitar
+ * @param {string} req.body.guiaId - ID del guía asignado
+ * @returns {Object} {success: boolean, reserva: Object} - Reserva creada
+ * @throws {400} Faltan datos requeridos
+ * @throws {500} Error al guardar la reserva
+ */
 router.post("/api/reservas", async (req, res) => {
   try {
     const { cedula, nombre, email, telefono, fechaVisita, lugaresSeleccionados, guiaId } = req.body

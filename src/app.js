@@ -10,6 +10,8 @@ import session from "express-session";
 import dotenv from "dotenv"
 import cors from "cors"
 import sessionFileStore from "session-file-store"
+import swaggerUI from "swagger-ui-express"
+import swaggerDefinition from "./swagger.js"
 
 
 dotenv.config()
@@ -56,6 +58,14 @@ app.use((req, res, next) => {
   res.locals.user = req.session.user || null
   next()
 })
+
+// Swagger Documentation
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDefinition, {
+  swaggerOptions: {
+    persistAuthorization: true
+  },
+  customCss: '.swagger-ui .topbar { display: none }'
+}))
 
 app.use("/", mapaRoutes)
 app.use("/", sesionRoutes)
