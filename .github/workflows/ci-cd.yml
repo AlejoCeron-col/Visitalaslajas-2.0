@@ -47,6 +47,16 @@ jobs:
       run: npm run test:integration
       env:
         DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+      
+    - name: Debug env
+      run: |
+        echo "DATABASE_URL=$DATABASE_URL"
+        echo "POSTGRES_URL=$POSTGRES_URL"
+      env:
+        DATABASE_URL: postgres://postgres:postgres@localhost:5432/visita_lajas_db
+    - name: List databases
+        run: |
+        PGPASSWORD=postgres psql -h localhost -U postgres -l
     
     - name: Run E2E Tests
       run: npm run test:e2e
