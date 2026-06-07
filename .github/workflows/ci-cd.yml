@@ -71,17 +71,8 @@ jobs:
       env:
         DATABASE_URL: postgres://postgres:postgres@localhost:5432/visita_lajas_db
     
-    - name: Generate Coverage Report
-      run: npm test -- --coverage
     
-    - name: Upload Coverage to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        file: ./coverage/coverage-final.json
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
-
+    
   deploy-to-production:
     needs: build-and-test
     runs-on: ubuntu-latest
@@ -111,11 +102,3 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{"commit_sha":"'${{ github.sha }}'"}' || true
     
-    - name: Deploy to Railway
-      env:
-        RAILWAY_DEPLOY_TOKEN: ${{ secrets.RAILWAY_DEPLOY_TOKEN }}
-      if: ${{ env.RAILWAY_DEPLOY_TOKEN != '' }}
-      run: |
-        echo "Deploying to Railway..."
-        echo "Deployment triggered on main branch"
-        # Add Railway deployment command here if needed
