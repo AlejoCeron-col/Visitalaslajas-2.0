@@ -5,7 +5,7 @@
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18-brightgreen)]()
 [![License](https://img.shields.io/badge/license-ISC-blue)]()
 
-## 📋 Descripción del Proyecto
+## Descripción del Proyecto
 
 **Visita Las Lajas** es una plataforma de turismo integral que conecta visitantes con los lugares más hermosos y guías expertos en Las Lajas e Ipiales. La aplicación ofrece:
 
@@ -15,7 +15,7 @@
 - 👤 **Gestión de Usuarios**: Registro y autenticación segura
 - 📊 **Panel de Consultas**: Seguimiento de reservas y estado
 
-## 🎯 Características Principales
+## Características Principales
 
 ### Tecnologías Utilizadas
 
@@ -50,7 +50,7 @@
 - **JSDoc**: Documentación de código
 - **GitHub Wiki**: Documentación técnica completa
 
-## 🚀 Guía de Instalación
+## Guía de Instalación
 
 ### Requisitos Previos
 
@@ -126,7 +126,7 @@ docker run -p 3000:3000 \
   visita-lajas:latest
 ```
 
-## 📁 Arquitectura General del Sistema
+## Arquitectura General del Sistema
 
 ```
 Visita-Las-Lajas/
@@ -152,7 +152,7 @@ Visita-Las-Lajas/
 └── package.json               # Dependencias y scripts
 ```
 
-## 📖 Documentación de API
+## Documentación de API
 
 ### Acceder a Swagger UI
 
@@ -195,7 +195,7 @@ GET /iniciosesion             # Formulario de login
 POST /procesar-login          # Procesar login
 ```
 
-## 🧪 Pruebas de Software
+## Pruebas de Software
 
 ### 1. Pruebas Unitarias (85% Coverage)
 
@@ -242,7 +242,7 @@ npx playwright test --ui
 2. **registro.spec.js**: Proceso de registro de usuarios
 3. **consulta_reserva.spec.js**: Consulta de reservas
 
-## 🔄 Pipeline CI/CD
+## Pipeline CI/CD
 
 ### Ejecución Automática
 
@@ -275,7 +275,7 @@ RAILWAY_DEPLOY_TOKEN: Token de Railway
 https://github.com/AlejoCeron-col/Visitalaslajas/actions
 ```
 
-## 📦 Despliegue en Producción
+## Despliegue en Producción
 
 ### Opción 1: Render (Recomendado)
 
@@ -294,7 +294,7 @@ https://github.com/AlejoCeron-col/Visitalaslajas/actions
 
 
 
-## 📝 Documentación del Código
+## Documentación del Código
 
 ### JSDoc - Funciones Documentadas
 
@@ -323,7 +323,7 @@ npm install --save-dev jsdoc
 npx jsdoc -c jsdoc.json
 ```
 
-## 📚 Wiki del Repositorio
+## Wiki del Repositorio
 
 La Wiki está disponible en: [Visita Las Lajas Wiki](https://github.com/AlejoCeron-col/Visitalaslajas/wiki)
 
@@ -334,7 +334,7 @@ La Wiki está disponible en: [Visita Las Lajas Wiki](https://github.com/AlejoCer
 - Tutoriales de desarrollo
 - Troubleshooting común
 
-## 🛠️ Scripts NPM Disponibles
+## Scripts NPM Disponibles
 
 ```bash
 # Desarrollo
@@ -357,27 +357,7 @@ docker-compose up        # Iniciar servicios con Docker
 docker-compose down      # Detener servicios
 ```
 
-## 🔐 Seguridad
-
-### Medidas Implementadas
-
-- ✅ **Contraseñas hasheadas** con bcryptjs
-- ✅ **Sesiones seguras** con express-session
-- ✅ **CORS configurado** para control de acceso
-- ✅ **HttpOnly cookies** para sesiones
-- ✅ **Validación de entrada** en formularios
-- ✅ **Variables de entorno** para datos sensibles
-
-### Checklist de Seguridad
-
-- [ ] Cambiar `SESSION_SECRET` en producción
-- [ ] Usar HTTPS en producción
-- [ ] Configurar CORS apropiadamente
-- [ ] Validar todas las entradas de usuario
-- [ ] Usar variables de entorno para secretos
-- [ ] Revisar logs de acceso regularmente
-
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Error: "Cannot connect to database"
 
