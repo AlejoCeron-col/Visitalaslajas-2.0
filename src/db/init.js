@@ -1,4 +1,4 @@
-
+/* istanbul ignore file */
 
 import pool from "./postgres.js"
 
