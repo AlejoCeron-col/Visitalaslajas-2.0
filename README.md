@@ -288,24 +288,11 @@ https://github.com/AlejoCeron-col/Visitalaslajas/actions
    SESSION_SECRET=...
    PORT=3000
    ```
-4. Deploy automático al hacer push a `main`
+4. Deploy automático al hacer push a `main, master, develop`
 
 **URL de Ejemplo**: `https://visita-lajas.onrender.com`
 
-### Opción 2: Railway
 
-1. Conectar repositorio con Railway
-2. Crear proyecto
-3. Agregar PostgreSQL plugin
-4. Configurar variables de entorno
-5. Deploy automático
-
-### Opción 3: Vercel (Frontend)
-
-Para desplegar solo el frontend estático:
-```bash
-npm run build  # Si existe script build
-```
 
 ## 📝 Documentación del Código
 
