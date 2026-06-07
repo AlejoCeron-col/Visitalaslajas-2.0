@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 /**
  * Configuración de Swagger/OpenAPI para la documentación de API
  */

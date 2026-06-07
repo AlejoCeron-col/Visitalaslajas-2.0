@@ -1,54 +1,36 @@
 import request from 'supertest'
 import express from 'express'
+import rutasRouter from '../../src/routes/rutas.js'
+import path from 'path'
+import pool from '../../src/db/postgres.js'
+
+
 
 const app = express()
 
 app.use(express.json())
 
-// Mock endpoints para API REST
-app.get('/api/lugares', (req, res) => {
-  const lugares = [
-    { id: 1, nombre: 'Santuario', coordenadas: [0.8042, -77.5847] },
-    { id: 2, nombre: 'Puente', coordenadas: [0.8048, -77.5842] },
-    { id: 3, nombre: 'Mirador', coordenadas: [0.8055, -77.5838] }
-  ]
-  res.json(lugares)
+app.set('view engine', 'ejs')
+app.set('views', path.join(process.cwd(), 'src/views/layout'))
+
+app.use((req, res, next) => {
+  req.session = { user: null }
+  next()
 })
 
-app.get('/api/lugares/:id', (req, res) => {
-  const lugar = {
-    id: req.params.id,
-    nombre: 'Santuario de Las Lajas',
-    coordenadas: [0.8042, -77.5847],
-    descripcion: 'Basílica construida'
-  }
-  res.json(lugar)
+app.use((err, req, res, next) => {
+  console.error('ERROR TEST:', err)
+  next(err)
 })
 
-app.get('/api/guias', (req, res) => {
-  const guias = [
-    { id: 'g1', nombre: 'Carlos Mendoza', rating: 5 },
-    { id: 'g2', nombre: 'María López', rating: 4 }
-  ]
-  res.json(guias)
-})
+app.response.render = function(view, options) {
+  this.status(200).send(`<html>${view}</html>`)
+}
 
-app.post('/api/reserva', (req, res) => {
-  const { usuario_id, lugar_id, fecha, hora } = req.body
+app.use(rutasRouter)
 
-  if (!usuario_id || !lugar_id || !fecha || !hora) {
-    return res.status(400).json({ error: 'Faltan campos requeridos' })
-  }
 
-  res.status(201).json({
-    id: 1,
-    usuario_id,
-    lugar_id,
-    fecha,
-    hora,
-    estado: 'confirmada'
-  })
-})
+
 
 describe('API Integration Tests', () => {
   describe('GET /api/lugares', () => {
@@ -59,7 +41,7 @@ describe('API Integration Tests', () => {
         .expect(200)
 
       expect(Array.isArray(res.body)).toBe(true)
-      expect(res.body.length).toBe(3)
+      expect(res.body.length).toBeGreaterThan(0)
       expect(res.body[0]).toHaveProperty('nombre')
       expect(res.body[0]).toHaveProperty('coordenadas')
     })
@@ -79,54 +61,57 @@ describe('API Integration Tests', () => {
     })
   })
 
-  describe('GET /api/lugares/:id', () => {
-    it('should return specific place by id', async () => {
-      const res = await request(app)
-        .get('/api/lugares/1')
-        .expect('Content-Type', /json/)
-        .expect(200)
+  describe('GET /api/lugares', () => {
+  it('should return tourist places', async () => {
+    const res = await request(app)
+      .get('/api/lugares')
+      .expect(200)
 
-      expect(res.body.id).toBe('1')
-      expect(res.body).toHaveProperty('nombre')
-      expect(res.body).toHaveProperty('descripcion')
-    })
+    expect(Array.isArray(res.body)).toBe(true)
+    expect(res.body.length).toBeGreaterThan(0)
   })
+})
 
-  describe('GET /api/guias', () => {
-    it('should return list of tour guides', async () => {
-      const res = await request(app)
-        .get('/api/guias')
-        .expect('Content-Type', /json/)
-        .expect(200)
+describe('GET /guia_turistica', () => {
+  it('should render page', async () => {
+    const res = await request(app)
+      .get('/guia_turistica')
+      .expect(200)
 
-      expect(Array.isArray(res.body)).toBe(true)
-      expect(res.body.length).toBe(2)
-      expect(res.body[0]).toHaveProperty('nombre')
-      expect(res.body[0]).toHaveProperty('rating')
-    })
+    expect(res.text).toContain('guia_turistica')
   })
+})
 
-  describe('POST /api/reserva', () => {
-    it('should create a reservation with valid data', async () => {
-      const res = await request(app)
-        .post('/api/reserva')
-        .send({
-          usuario_id: 1,
-          lugar_id: 1,
-          fecha: '2026-06-15',
-          hora: '10:00'
-        })
-        .expect('Content-Type', /json/)
-        .expect(201)
+describe('GET /consulta_reserva', () => {
+  it('should render page', async () => {
+    const res = await request(app)
+      .get('/consulta_reserva')
+      .expect(200)
 
-      expect(res.body).toHaveProperty('id')
-      expect(res.body.estado).toBe('confirmada')
-      expect(res.body.usuario_id).toBe(1)
+    expect(res.text.length).toBeGreaterThan(0)
+  })
+})
+
+  it('should create a reservation with valid data', async () => {
+  const res = await request(app)
+    .post('/api/reservas')
+    .send({
+      cedula: '123456789',
+      nombre: 'Usuario Test',
+      email: 'test@test.com',
+      telefono: '3001234567',
+      fechaVisita: '2026-06-15',
+      lugaresSeleccionados: ['santuario'],
+      guiaId: 'g1'
     })
+
+  expect(res.status).toBe(200)
+  expect(res.body.success).toBe(true)
+})
 
     it('should reject reservation with missing fields', async () => {
       const res = await request(app)
-        .post('/api/reserva')
+        .post('/api/reservas')
         .send({
           usuario_id: 1,
           // Missing lugar_id, fecha, hora
@@ -135,28 +120,32 @@ describe('API Integration Tests', () => {
         .expect(400)
 
       expect(res.body).toHaveProperty('error')
-      expect(res.body.error).toBe('Faltan campos requeridos')
+      expect(res.body.error).toContain('Faltan datos requeridos')
     })
 
     it('should validate all required fields', async () => {
-      const requiredFields = ['usuario_id', 'lugar_id', 'fecha', 'hora']
+      const requiredFields = ['cedula','nombre','lugaresSeleccionados','guiaId']
 
       for (const field of requiredFields) {
         const payload = {
-          usuario_id: 1,
-          lugar_id: 1,
-          fecha: '2026-06-15',
-          hora: '10:00'
+          cedula: '123456789',
+          nombre: 'Usuario Test',
+          fechaVisita: '2026-06-15',
+          lugaresSeleccionados: ['santuario'],
+          guiaId: 'g1'
         }
         delete payload[field]
 
         const res = await request(app)
-          .post('/api/reserva')
+          .post('/api/reservas')
           .send(payload)
           .expect(400)
 
-        expect(res.body.error).toBe('Faltan campos requeridos')
+        expect(res.body.error).toContain('Faltan datos requeridos')
       }
     })
   })
+
+afterAll(async () => {
+  await pool.end()
 })

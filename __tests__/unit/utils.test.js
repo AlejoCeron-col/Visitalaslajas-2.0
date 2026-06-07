@@ -1,53 +1,8 @@
-/**
- * Formatea fecha a formato DD/MM/YYYY
- * @param {Date|string} date - Fecha a formatear
- * @returns {string} Fecha formateada
- */
-export const formatDate = (date) => {
-  if (!date) return ''
-  const d = new Date(date)
-  const day = String(d.getDate()).padStart(2, '0')
-  const month = String(d.getMonth() + 1).padStart(2, '0')
-  const year = d.getFullYear()
-  return `${day}/${month}/${year}`
-}
-
-/**
- * Calcula edad en años
- * @param {Date|string} birthDate - Fecha de nacimiento
- * @returns {number} Edad en años
- */
-export const calculateAge = (birthDate) => {
-  const today = new Date()
-  const birth = new Date(birthDate)
-  let age = today.getFullYear() - birth.getFullYear()
-  const monthDiff = today.getMonth() - birth.getMonth()
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    age--
-  }
-  return age
-}
-
-/**
- * Pagina un array
- * @param {Array} items - Items a paginar
- * @param {number} page - Número de página (1-indexed)
- * @param {number} pageSize - Tamaño de página
- * @returns {Object} { items, total, pages, current }
- */
-export const paginate = (items, page = 1, pageSize = 10) => {
-  if (!Array.isArray(items)) return { items: [], total: 0, pages: 0, current: page }
-  const total = items.length
-  const pages = Math.ceil(total / pageSize)
-  const start = (page - 1) * pageSize
-  const end = start + pageSize
-  return {
-    items: items.slice(start, end),
-    total,
-    pages,
-    current: page
-  }
-}
+import {
+  formatDate,
+  calculateAge,
+  paginate
+} from '../../src/utils.js'
 
 describe('Utility Functions', () => {
   describe('formatDate', () => {

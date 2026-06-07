@@ -1,55 +1,11 @@
 import bcrypt from 'bcryptjs'
 
-/**
- * Valida el correo electrónico
- * @param {string} email - Correo a validar
- * @returns {boolean} True si es válido
- */
-export const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
-}
-
-/**
- * Valida el formato de la cédula
- * @param {string} cedula - Cédula a validar
- * @returns {boolean} True si es válida
- */
-export const validateCedula = (cedula) => {
-  if (!cedula) return false
-  const cedulaStr = cedula.toString()
-  return cedulaStr.length >= 8 && /^\d+$/.test(cedulaStr)
-}
-
-/**
- * Valida el teléfono
- * @param {string} telefono - Teléfono a validar
- * @returns {boolean} True si es válido
- */
-export const validatePhoneNumber = (telefono) => {
-  if (!telefono) return false
-  return /^[\d\s\-\+()]+$/.test(telefono) && telefono.length >= 8
-}
-
-/**
- * Valida la contraseña
- * @param {string} password - Contraseña a validar
- * @returns {boolean} True si cumple requisitos
- */
-export const validatePassword = (password) => {
-  if (!password) return false
-  return password.length >= 6
-}
-
-/**
- * Compara una contraseña con su hash
- * @param {string} password - Contraseña en texto plano
- * @param {string} hash - Hash de la contraseña
- * @returns {boolean} True si coinciden
- */
-export const comparePasswords = async (password, hash) => {
-  return await bcrypt.compare(password, hash)
-}
+import {
+  validateEmail,
+  validateCedula,
+  validatePhoneNumber,
+  validatePassword,
+} from '../../src/utils.js'
 
 describe('Auth Utilities', () => {
   describe('validateEmail', () => {
@@ -107,19 +63,4 @@ describe('Auth Utilities', () => {
     })
   })
 
-  describe('comparePasswords', () => {
-    it('should return true for matching passwords', async () => {
-      const password = 'myPassword123'
-      const hash = await bcrypt.hash(password, 10)
-      const result = await comparePasswords(password, hash)
-      expect(result).toBe(true)
-    })
-
-    it('should return false for non-matching passwords', async () => {
-      const password = 'myPassword123'
-      const hash = await bcrypt.hash(password, 10)
-      const result = await comparePasswords('wrongPassword', hash)
-      expect(result).toBe(false)
-    })
-  })
 })

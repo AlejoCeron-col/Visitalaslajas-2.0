@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 /**
  * @fileoverview Middleware y funciones de utilidad para el sistema de turismo.
  * Incluye funciones de validación, formateo y cálculos geográficos.

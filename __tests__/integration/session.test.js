@@ -2,7 +2,7 @@ import request from 'supertest'
 import express from 'express'
 import path from 'path'
 import session from 'express-session'
-import sessionRouter from '../../src/routes/sesion.js'
+import sessionRouter, { verificarAutenticacion } from '../../src/routes/sesion.js'
 
 const app = express()
 
@@ -19,42 +19,35 @@ app.use(session({
   cookie: { secure: false }
 }))
 
-// Mock route para testing
-app.get('/registro', (req, res) => {
-  res.render('registro', {
-    titulo: 'Registro - Las Lajas e Ipiales',
-    ocultarbtnreg: false,
-    ocultarbtnini: true,
-    error: null
-  })
-})
+app.use('/', sessionRouter)
 
-app.get('/iniciosesion', (req, res) => {
-  res.render('iniciosesion', {
-    titulo: 'Inicio de Sesión',
-    ocultarbtnreg: true,
-    ocultarbtnini: false,
-    error: null
-  })
-})
 
-app.post('/procesar-registro', (req, res) => {
-  const { cedula, nombre, email, password, Conf_password } = req.body
-
-  // Validación simple
-  if (!cedula || !nombre || !email || !password) {
-    return res.status(400).json({ error: 'Faltan campos requeridos' })
-  }
-
-  if (password !== Conf_password) {
-    return res.status(400).json({ error: 'Las contraseñas no coinciden' })
-  }
-
-  // Mock success
-  res.status(201).json({ success: true, message: 'Usuario registrado' })
-})
 
 describe('Session and Auth Integration Tests', () => {
+
+  describe('Static pages', () => {
+  it('should render lugares_visita page', async () => {
+    const res = await request(app)
+      .get('/lugares_visita')
+
+    expect(res.status).toBe(200)
+  })
+})
+
+it('should render restaurantes page', async () => {
+  const res = await request(app)
+    .get('/restaurantes')
+
+  expect(res.status).toBe(200)
+})
+
+it('should render hoteles page', async () => {
+  const res = await request(app)
+    .get('/hoteles')
+
+  expect(res.status).toBe(200)
+})
+
   describe('GET /registro', () => {
     it('should render registro page', async () => {
       const res = await request(app)
@@ -66,6 +59,8 @@ describe('Session and Auth Integration Tests', () => {
     })
   })
 
+  
+
   describe('GET /iniciosesion', () => {
     it('should render login page', async () => {
       const res = await request(app)
@@ -73,71 +68,256 @@ describe('Session and Auth Integration Tests', () => {
         .expect('Content-Type', /html/)
         .expect(200)
 
-      expect(res.text).toContain('Inicio de Sesión')
+      expect(res.text).toContain('Iniciar Sesión - Las Lajas e Ipiales')
     })
   })
 
-  describe('POST /procesar-registro', () => {
+  describe('POST /registrar-usuario', () => {
     it('should reject registration with missing fields', async () => {
       const res = await request(app)
-        .post('/procesar-registro')
+        .post('/registrar-usuario')
         .send({
-          cedula: '123456789',
-          nombre: 'Test User'
+          cedula: `${Date.now()}`,
+          nombre: 'Test User',
+          fechanacimiento: '2000-01-01'
           // Missing email, password, Conf_password
         })
         .expect(400)
 
-      expect(res.body.error).toBe('Faltan campos requeridos')
+      expect(res.text).toContain('Todos los campos son requeridos')
     })
 
     it('should reject registration with mismatched passwords', async () => {
       const res = await request(app)
-        .post('/procesar-registro')
+        .post('/registrar-usuario')
         .send({
-          cedula: '123456789',
+          cedula: `${Date.now()}`,
           nombre: 'Test User',
-          email: 'test@example.com',
+          fechanacimiento: '2000-01-01',
+          telefono: '3001234567',
+          email: `test${Date.now()}@test.com`,
           password: 'password123',
           Conf_password: 'password456'
         })
         .expect(400)
 
-      expect(res.body.error).toBe('Las contraseñas no coinciden')
+      expect(res.text).toContain('Las contraseñas no coinciden')
     })
 
-    it('should process valid registration', async () => {
-      const res = await request(app)
-        .post('/procesar-registro')
-        .send({
-          cedula: '123456789',
-          nombre: 'Test User',
-          email: 'test@example.com',
-          password: 'password123',
-          Conf_password: 'password123'
-        })
-        .expect(201)
+    it('should reject invalid birth date', async () => {
+  const res = await request(app)
+    .post('/registrar-usuario')
+    .send({
+      cedula: '123',
+      nombre: 'Test',
+      fechanacimiento: 'fecha-invalida',
+      telefono: '3001234567',
+      email: 'test@test.com',
+      password: '123456',
+      Conf_password: '123456'
+    })
 
-      expect(res.body.success).toBe(true)
-      expect(res.body.message).toBe('Usuario registrado')
+  expect(res.status).toBe(400)
+})
+
+it('should reject duplicated email', async () => {
+  await request(app)
+    .post('/registrar-usuario')
+    .send({
+      cedula: Date.now().toString(),
+      nombre: 'Test',
+      fechanacimiento: '2000-01-01',
+      telefono: '3001234567',
+      email: 'duplicado@test.com',
+      password: '123456',
+      Conf_password: '123456'
+    })
+
+  const res = await request(app)
+    .post('/registrar-usuario')
+    .send({
+      cedula: (Date.now() + 1).toString(),
+      nombre: 'Test',
+      fechanacimiento: '2000-01-01',
+      telefono: '3001234567',
+      email: 'duplicado@test.com',
+      password: '123456',
+      Conf_password: '123456'
+    })
+
+  expect(res.status).toBe(400)
+})
+
+it('should reject duplicated cedula', async () => {
+  const cedula = Date.now().toString()
+
+  await request(app)
+    .post('/registrar-usuario')
+    .send({
+      cedula,
+      nombre: 'Test',
+      fechanacimiento: '2000-01-01',
+      telefono: '3001234567',
+      email: `a${cedula}@test.com`,
+      password: '123456',
+      Conf_password: '123456'
+    })
+
+  const res = await request(app)
+    .post('/registrar-usuario')
+    .send({
+      cedula,
+      nombre: 'Test',
+      fechanacimiento: '2000-01-01',
+      telefono: '3001234567',
+      email: `b${cedula}@test.com`,
+      password: '123456',
+      Conf_password: '123456'
+    })
+
+  expect(res.status).toBe(400)
+})
+
+    it('should process valid registration', async () => {
+    const res = await request(app)
+      .post('/registrar-usuario')
+      .send({
+        cedula: `${Date.now()}`,
+        nombre: 'Test User',
+        fechanacimiento: '2000-01-01',
+        telefono: '3001234567',
+        email: `test${Date.now()}@test.com`,
+        password: 'password123',
+        Conf_password: 'password123'
+      })
+
+      expect(res.status).toBe(302)
+      expect(res.headers.location).toBe('/registro?registro=ok')
     })
   })
 
   describe('Session Management', () => {
-    it('should maintain session across requests', async () => {
-      const agent = request.agent(app)
+  it('should redirect after successful registration', async () => {
+    const res = await request(app)
+      .post('/registrar-usuario')
+      .send({
+        cedula: `${Date.now()}`,
+        nombre: 'Usuario Test',
+        fechanacimiento: '2000-01-01',
+        telefono: '3001234567',
+        email: `test${Date.now()}@test.com`,
+        password: 'password123',
+        Conf_password: 'password123'
+      })
 
-      // First request
-      await agent
-        .get('/registro')
-        .expect(200)
+    expect(res.status).toBe(302)
+    expect(res.headers.location).toBe('/registro?registro=ok')
+  })
 
-      // Second request should maintain session
-      const res = await agent
-        .get('/iniciosesion')
-        .expect(200)
+  it('should login successfully', async () => {
+  const email = `login${Date.now()}@test.com`
 
-      expect(res.text).toContain('Sesión')
+  await request(app)
+    .post('/registrar-usuario')
+    .send({
+      cedula: Date.now().toString(),
+      nombre: 'Login Test',
+      fechanacimiento: '2000-01-01',
+      telefono: '3001234567',
+      email,
+      password: '123456',
+      Conf_password: '123456'
     })
+
+  const res = await request(app)
+    .post('/iniciar-sesion')
+    .send({
+      email,
+      password: '123456'
+    })
+
+  expect(res.status).toBe(302)
+})
+
+it('should reject login without credentials', async () => {
+  const res = await request(app)
+    .post('/iniciar-sesion')
+    .send({})
+
+  expect(res.status).toBe(400)
+})
+
+it('should reject nonexistent user', async () => {
+  const res = await request(app)
+    .post('/iniciar-sesion')
+    .send({
+      email: 'noexiste@test.com',
+      password: '123456'
+    })
+
+  expect(res.status).toBe(401)
+})
+
+it('should reject invalid password', async () => {
+  const email = `wrong${Date.now()}@test.com`
+
+  await request(app)
+    .post('/registrar-usuario')
+    .send({
+      cedula: Date.now().toString(),
+      nombre: 'Test',
+      fechanacimiento: '2000-01-01',
+      telefono: '3001234567',
+      email,
+      password: '123456',
+      Conf_password: '123456'
+    })
+
+  const res = await request(app)
+    .post('/iniciar-sesion')
+    .send({
+      email,
+      password: 'incorrecta'
+    })
+
+  expect(res.status).toBe(401)
+})
+
+it('should logout user', async () => {
+  const res = await request(app)
+    .get('/logout')
+
+  expect(res.status).toBe(302)
+})
+
+})
+})
+
+describe('Authentication Middleware', () => {
+  it('should redirect if user is not authenticated', () => {
+    const req = { session: {} }
+    const res = { redirect: jest.fn() }
+    const next = jest.fn()
+
+    verificarAutenticacion(req, res, next)
+
+    expect(res.redirect).toHaveBeenCalledWith('/iniciar-sesion')
+    expect(next).not.toHaveBeenCalled()
+  })
+
+  it('should call next when user is authenticated', () => {
+    const req = {
+      session: {
+        user: { id: 1 }
+      }
+    }
+
+    const res = { redirect: jest.fn() }
+    const next = jest.fn()
+
+    verificarAutenticacion(req, res, next)
+
+    expect(next).toHaveBeenCalled()
+    expect(res.redirect).not.toHaveBeenCalled()
   })
 })

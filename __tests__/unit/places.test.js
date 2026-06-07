@@ -1,52 +1,10 @@
-/**
- * Filtra lugares turísticos por palabra clave
- * @param {Array} lugares - Array de lugares
- * @param {string} keyword - Palabra clave para buscar
- * @returns {Array} Lugares filtrados
- */
-export const filterPlaces = (lugares, keyword) => {
-  if (!keyword) return lugares
-  const lowerKeyword = keyword.toLowerCase()
-  return lugares.filter(lugar =>
-    lugar.nombre.toLowerCase().includes(lowerKeyword) ||
-    lugar.descripcion.toLowerCase().includes(lowerKeyword)
-  )
-}
+import {
+  calculateDistance,
+  sortByDistance,
+  filterPlaces
+} from '../../src/utils.js'
 
-/**
- * Calcula distancia entre dos puntos geográficos (Haversine)
- * @param {number} lat1 - Latitud 1
- * @param {number} lon1 - Longitud 1
- * @param {number} lat2 - Latitud 2
- * @param {number} lon2 - Longitud 2
- * @returns {number} Distancia en km
- */
-export const calculateDistance = (lat1, lon1, lat2, lon2) => {
-  const R = 6371 // Radio de la Tierra en km
-  const dLat = (lat2 - lat1) * Math.PI / 180
-  const dLon = (lon2 - lon1) * Math.PI / 180
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2)
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-  return R * c
-}
 
-/**
- * Ordena lugares por distancia desde un punto
- * @param {Array} lugares - Array de lugares
- * @param {number} lat - Latitud del punto
- * @param {number} lon - Longitud del punto
- * @returns {Array} Lugares ordenados
- */
-export const sortByDistance = (lugares, lat, lon) => {
-  return [...lugares].sort((a, b) => {
-    const distA = calculateDistance(lat, lon, a.coordenadas[0], a.coordenadas[1])
-    const distB = calculateDistance(lat, lon, b.coordenadas[0], b.coordenadas[1])
-    return distA - distB
-  })
-}
 
 describe('Places Utilities', () => {
   const mockPlaces = [
